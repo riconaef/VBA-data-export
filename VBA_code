@@ -1,0 +1,82 @@
+Sub export_all()
+' Makro Alle Daten in CSV exportieren
+
+    Dim My_filenumber As Integer
+    Dim logSTR As String
+    
+    Dim min As String
+    Dim stunde As String
+    Dim sekunde As String
+    Dim uhrzeit As String
+    Dim jahr As String
+    Dim monat As String
+    Dim tage As String
+    Dim shift_row As Integer
+    Dim shift_col As Integer
+    Dim name_row As Integer
+    Dim nam_col As Integer
+    Dim steps_summiert As Integer
+    Dim LR As Long
+    Dim Ergebnis As Long
+    
+    'Datum ist X Zellen links und X Zellen über der Zelle "summiert"
+    shift_row = -4
+    shift_col = -4
+    
+    'Name Messstelle ist im Feld C3
+    name_row = 3
+    name_col = "C"
+    
+    'Anzahl Spalten zwischen welchen summiert sind
+    steps_summiert = 5
+
+    
+    
+    
+    'Daten sammeln
+    'Anfangszeile finden
+    erste_Zeile = Tabelle1.Columns(1).Find(what:=1, lookat:=xlWhole).Row
+    
+    'Endzeile finden
+    letzte_Zeile = Range("A1").SpecialCells(xlCellTypeLastCell).Row
+    
+    'Erste Spalte mit "summiert" finden
+    summiert_erste_Spalte = Tabelle1.Rows(erste_Zeile - 2).Find(what:="summiert", lookat:=xlWhole).Column
+    
+    'Letzte Spalte mit Daten finden
+    letzte_Spalte = Range("A11").SpecialCells(xlCellTypeLastCell).Column
+    
+    'Output String erstellen
+    For j = summiert_erste_Spalte To letzte_Spalte Step steps_summiert
+        For i = erste_Zeile To letzte_Zeile - 2
+            logSTR = logSTR & _
+            Cells(name_row, name_col) & "," & _
+            Cells(erste_Zeile + shift_row, j + shift_col) & "," & _
+            Cells(i, "A").Value & "," & _
+            Cells(i, j) & vbCrLf
+        Next i
+    Next j
+    
+    
+    'Zeitstempel erstellen
+    jahr = Year(Date)
+    monat = Month(Date)
+    tage = Day(Date)
+    stunde = Hour(Time)
+    min = Minute(Time)
+    sekunde = Second(Time)
+    
+    uhrzeit = jahr + "-" + monat + "-" + tage + "_" + stunde + "-" + min + "-" + sekunde
+
+
+    'Daten exportieren
+    folderPath = Application.ActiveWorkbook.Path
+    folderFile = folderPath + "\" + uhrzeit + "_Tedamos.csv"
+    
+    My_filenumber = FreeFile
+    
+    Open folderFile For Append As FreeFile
+        Print #My_filenumber, logSTR
+    Close #My_filenumber
+
+End Sub
