@@ -80,3 +80,67 @@ Sub export_all()
     Close #My_filenumber
 
 End Sub
+
+Sub update_graph()
+'Makro Graphiken updaten
+
+    'Variablen definieren
+    Dim Folgemessung As Range
+    Dim Folgemessung_row As Integer
+    Dim Folgemessung_col As Integer
+    Dim Specified_date As Range
+    Dim Summ_x As Range
+    Dim Summ_y As Range
+    Dim Interv_x As Range
+    Dim Interv_y As Range
+    Dim r As Byte, g As Byte, b As Byte
+    
+    'Wähle das Inputfeld
+    Set Folgemessung = Application.InputBox("Wähle das Feld der Folgemessung aus", Type:=8)
+    Folgemessung_row = Folgemessung.Row
+    Folgemessung_col = Folgemessung.Column
+    
+    'Datum speichern
+    Set Specified_date = Range(Cells(Folgemessung_row + 1, Folgemessung_col), Cells(Folgemessung_row + 1, Folgemessung_col))
+    
+    'Hier werden die jeweiligen Daten welche für den Plot benutzt werden definiert
+    Set Summ_x = Range(Cells(Folgemessung_row + 5, Folgemessung_col + 4), Cells(Folgemessung_row + 35, Folgemessung_col + 4))
+    Set Summ_y = Range(Cells(Folgemessung_row + 5, 1), Cells(Folgemessung_row + 35, 1))
+    Set Interv_x = Range(Cells(Folgemessung_row + 5, Folgemessung_col + 3), Cells(Folgemessung_row + 35, Folgemessung_col + 3))
+    Set Interv_y = Range(Cells(Folgemessung_row + 5, 1), Cells(Folgemessung_row + 35, 1))
+    
+    'Set Random Color for plotting and marker
+    r = WorksheetFunction.RandBetween(0, 255)
+    g = WorksheetFunction.RandBetween(0, 255)
+    b = WorksheetFunction.RandBetween(0, 255)
+    marker = WorksheetFunction.RandBetween(1, 9)
+    
+    'Plot summ
+    Sheets("Def summ").Select
+    ActiveChart.ChartArea.Select
+    ActiveChart.PlotArea.Select
+
+    ActiveChart.SeriesCollection.NewSeries
+    ActiveChart.FullSeriesCollection(23).Name = Specified_date
+    ActiveChart.FullSeriesCollection(23).XValues = Summ_x
+    ActiveChart.FullSeriesCollection(23).Values = Summ_y
+    ActiveChart.FullSeriesCollection(23).Format.Line.Weight = 0.25
+    ActiveChart.FullSeriesCollection(23).Format.Line.ForeColor.RGB = RGB(r, g, b)
+    ActiveChart.FullSeriesCollection(23).MarkerStyle = marker
+    ActiveChart.FullSeriesCollection(23).MarkerSize = 3
+    
+    'Plot Interv
+    Sheets("Def Interv").Select
+    ActiveChart.ChartArea.Select
+    ActiveChart.PlotArea.Select
+
+    ActiveChart.SeriesCollection.NewSeries
+    ActiveChart.FullSeriesCollection(23).Name = Specified_date
+    ActiveChart.FullSeriesCollection(23).XValues = Interv_x
+    ActiveChart.FullSeriesCollection(23).Values = Interv_y
+    ActiveChart.FullSeriesCollection(23).Format.Line.Weight = 0.25
+    ActiveChart.FullSeriesCollection(23).Format.Line.ForeColor.RGB = RGB(r, g, b)
+    ActiveChart.FullSeriesCollection(23).MarkerStyle = marker
+    ActiveChart.FullSeriesCollection(23).MarkerSize = 3
+
+End Sub
